@@ -23,3 +23,4 @@ debian/changelog
 
 # RPM files
 rpmbuild/
+.DS_Store
