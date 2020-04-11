@@ -43,7 +43,7 @@ OBJ         = $(SRC:src/%.cpp=obj/%.o)
 DEPS        = $(OBJ:obj/%.o=obj/%.d)
 TARGET      = mergerfs
 MANPAGE     = $(TARGET).1
-FUSE_CFLAGS = -D_FILE_OFFSET_BITS=64 -Ilibfuse/include
+FUSE_CFLAGS = -D_FILE_OFFSET_BITS=64 -Ifuse/include
 CFLAGS      = -g -Wall \
 	      $(OPTS) \
 	      -Wno-unused-result \
@@ -77,9 +77,9 @@ help:
 	@echo "usage: make"
 	@echo "make XATTR_AVAILABLE=0 - to build program without xattrs functionality (auto discovered otherwise)"
 
-$(TARGET): src/version.hpp obj/obj-stamp libfuse/lib/.libs/libfuse.a $(OBJ)
-	cd libfuse && make
-	$(CXX) $(CFLAGS) $(OBJ) -o $@ libfuse/lib/.libs/libfuse.a -ldl $(LDFLAGS)
+$(TARGET): src/version.hpp obj/obj-stamp fuse/lib/.libs/libosxfuse.a $(OBJ)
+	cd fuse && make
+	$(CXX) $(CFLAGS) $(OBJ) -o $@ fuse/lib/.libs/libosxfuse.a -ldl $(LDFLAGS)
 
 mount.mergerfs: $(TARGET)
 	$(LN) -fs "$<" "$@"
@@ -104,7 +104,7 @@ obj/obj-stamp:
 obj/%.o: src/%.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
-clean: rpm-clean libfuse_Makefile
+clean: rpm-clean fuse_Makefile
 ifneq ($(GIT),)
 ifeq  ($(shell test -e .git; echo $$?),0)
 	$(RM) -f src/version.hpp
@@ -114,10 +114,10 @@ endif
 	$(RM) -f "$(TARGET)" mount.mergerfs
 	$(FIND) . -name "*~" -delete
 
-	cd libfuse && $(MAKE) clean
+	cd fuse && $(MAKE) clean
 
-distclean: clean libfuse_Makefile
-	cd libfuse && $(MAKE) distclean
+distclean: clean fuse_Makefile
+	cd fuse && $(MAKE) distclean
 	$(GIT) clean -fd
 
 install: install-base install-mount.mergerfs install-man
@@ -201,17 +201,17 @@ else ifeq ($(shell test -e /usr/bin/yum; echo $$?),0)
 endif
 
 unexport CFLAGS LDFLAGS
-.PHONY: libfuse_Makefile
-libfuse_Makefile:
-ifeq ($(shell test -e libfuse/Makefile; echo $$?),1)
-	cd libfuse && \
+.PHONY: fuse_Makefile
+fuse_Makefile:
+ifeq ($(shell test -e fuse/Makefile; echo $$?),1)
+	cd fuse && \
 	$(MKDIR) -p m4 && \
 	autoreconf --force --install && \
         ./configure --enable-lib --disable-util --disable-example
 endif
 
-libfuse/lib/.libs/libfuse.a: libfuse_Makefile
-	cd libfuse && $(MAKE)
+fuse/lib/.libs/libosxfuse.a: fuse_Makefile
+	cd fuse && $(MAKE)
 
 .PHONY: all clean install help
 
