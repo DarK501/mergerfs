@@ -51,7 +51,7 @@ CFLAGS      = -g -Wall \
               -DFUSE_USE_VERSION=29 \
               -MMD \
 	      -DUGID_USE_RWLOCK=$(UGID_USE_RWLOCK)
-LDFLAGS       = -pthread -lrt
+LDFLAGS       = -pthread
 
 PREFIX        = /usr/local
 EXEC_PREFIX   = $(PREFIX)
