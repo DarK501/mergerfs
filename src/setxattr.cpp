@@ -387,7 +387,8 @@ namespace mergerfs
              const char *attrname,
              const char *attrval,
              size_t      attrvalsize,
-             int         flags)
+             int         flags,
+             uint32_t   pointer)
     {
       const fuse_context *fc     = fuse_get_context();
       const Config       &config = Config::get(fc);

@@ -26,7 +26,8 @@ namespace mergerfs
              const char *attrname,
              const char *attrval,
              size_t      attrvalsize,
-             int         flags);
+             int         flags,
+             uint32_t   pointer);
   }
 }
 

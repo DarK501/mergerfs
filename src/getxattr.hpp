@@ -25,7 +25,8 @@ namespace mergerfs
     getxattr(const char *fusepath,
              const char *attrname,
              char       *buf,
-             size_t      count);
+             size_t      count,
+             uint32_t   pointer);
   }
 }
 
